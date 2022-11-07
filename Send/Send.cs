@@ -10,14 +10,21 @@ void main()
     using var rabbitConn = factory.CreateConnection();
     using (var channel = rabbitConn.CreateModel())
     {
-        // Creating a Queue
-        channel.QueueDeclare(queue: "hello", exclusive: false, arguments: null, autoDelete: false);
-        const string message = "Send says: Hello world";
+        // Creating Exchange
+        channel.ExchangeDeclare(exchange:"logs", type: ExchangeType.Fanout);
+        // channel.QueueDeclare(queue: "hello", exclusive: false, arguments: null, autoDelete: false);
+        var message = getMessage();
         var body = Encoding.UTF8.GetBytes(message);
-        channel.BasicPublish(exchange: "", routingKey: "hello", basicProperties: null, body: body);
+        channel.BasicPublish(exchange: "logs", routingKey: "", basicProperties: null, body: body);
         Console.WriteLine("[x] Message sent");
     }
     Console.WriteLine("Press any  key to finish process...");
     Console.ReadLine();
 }
+
+string getMessage()
+{
+    return "info: Hello World!";
+}
+
 main();
